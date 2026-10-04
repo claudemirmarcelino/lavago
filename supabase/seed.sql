@@ -1,0 +1,3 @@
+-- Reservado para dados fictícios e reproduzíveis de desenvolvimento.
+-- Nenhum dado é criado antes da aprovação do primeiro modelo de domínio.
+-- Nunca incluir usuários reais, credenciais ou dados de produção.

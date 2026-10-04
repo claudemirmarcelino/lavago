@@ -1,0 +1,30 @@
+# Ambientes e credenciais
+.env
+.env.*
+!.env.example
+!**/.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+key.properties
+
+# Dependências e artefatos
+node_modules/
+.npm/
+.dart_tool/
+.flutter-plugins*
+build/
+dist/
+coverage/
+*.log
+supabase/.temp/
+supabase/.branches/
+
+# Editor e sistema
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
