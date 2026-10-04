@@ -72,6 +72,18 @@ removidas ao final. Não foram usadas APIs de pagamento nem dispositivos externo
 Também houve validação anterior à aplicação em transação revertida e banco temporário.
 Esta etapa foi executada integralmente pelo agente, sem comandos manuais do usuário.
 
+## Quinto incremento — execução simulada
+
+Migration 20261004000500_simulated_cycle_execution.sql aplicada pelo agente usando
+a CLI local. db:lint sem erros. Runner direto versionado passou nas cinco suítes,
+com plano TAP validado: 120 verificações SQL. Sete cenários de concorrência passaram,
+incluindo dois workers tentando entregar o mesmo comando e finalizações simultâneas.
+Simulador executável validou fluxo normal até liberar a reserva e timeout de entrega
+mantendo a reserva. Tudo executado contra a stack local; fixtures removidas/revertidas.
+
+Os scripts db:test:direct e simulate:controller agora fazem parte do repositório,
+permitindo reproduzir validações sem depender dos scripts temporários anteriores.
+
 ### Comandos locais
 
 ```sh
@@ -79,6 +91,8 @@ npm run db:reset
 npm run db:lint
 npm run db:test
 npm run db:test:concurrency
+npm run db:test:direct
+npm run simulate:controller
 ```
 
 Reset apaga somente os dados locais. A execução via CLI nesta sessão do agente encontrou

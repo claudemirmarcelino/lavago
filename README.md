@@ -24,6 +24,10 @@ backend, autorização, ciclo, comando pendente e auditoria em uma única transa
 88 testes SQL e cinco cenários concorrentes passaram; lint sem erros. Não há cobrança
 real, endpoint público de confirmação ou envio de comandos físicos.
 
+Quinta migration aplicada: entrega única, ACK, início, fim e timeout do ciclo com
+controlador simulado. Lint aprovado; 120 testes SQL, sete cenários concorrentes e
+duas simulações passaram. Nenhum controlador físico está conectado.
+
 ## Estrutura
 
 ```text
@@ -69,6 +73,7 @@ npm run db:reset
 npm run db:lint
 npm run db:test
 npm run db:test:concurrency
+npm run simulate:controller
 npm run dev:stop
 ```
 
@@ -83,10 +88,11 @@ Não há scripts de deploy remoto neste incremento.
 - [Contratos de pedidos e reservas](docs/api/orders.md)
 - [Base financeira e execução física](docs/architecture/0003-payments-automation-foundation.md)
 - [Confirmação verificada e autorização](docs/api/verified-payments.md)
+- [Execução e controlador simulado](docs/api/controller-simulation.md)
 - [Validação desta fundação](docs/architecture/validation.md)
 
-Próxima sequência: entrega e confirmação de comandos/ciclo com simulação,
-reconciliação de timeout → introduzir CI → integrações.
+Próxima sequência: introduzir CI → Edge Functions para o aplicativo → frontend.
+Protocolo real, reconciliação administrativa e gateway terão incrementos próprios.
 Cada tarefa deve seguir branch → desenvolvimento → testes → commit → PR → revisão → merge.
 
 Referências oficiais: [CLI e desenvolvimento local](https://supabase.com/docs/guides/local-development/cli/getting-started)

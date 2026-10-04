@@ -111,6 +111,43 @@ async function paymentRace(order, mode) {
     commands: mode === 'cancel-before' ? 0 : 1, reservations: mode === 'cancel-before' ? 0 : 1 });
 }
 
+async function executionRace(machine) {
+  await a.query('begin'); await b.query('begin');
+  await a.query('set local role service_role'); await b.query('set local role service_role');
+  const command = (await a.query('select * from public.claim_start_command($1)', [machine])).rows[0];
+  assert(command.id);
+  const pid = (await b.query('select pg_backend_pid() as pid')).rows[0].pid;
+  async function completeBlocked(pending) {
+    let blocked = false;
+    for (let i=0;i<100;i++) {
+      const row=(await admin.query('select wait_event_type from pg_stat_activity where pid=$1',[pid])).rows[0];
+      if(row?.wait_event_type==='Lock'){blocked=true;break;}
+      await new Promise(resolve=>setTimeout(resolve,25));
+    }
+    if(!blocked){await a.query('rollback');await pending;throw new Error('Operação de ciclo não aguardou lock');}
+    await a.query('commit');
+    const outcome=await pending;assert.ifError(outcome.error);await b.query('commit');return outcome.result;
+  }
+  const second=await completeBlocked(b.query('select * from public.claim_start_command($1)',[machine])
+    .then(result=>({result}),error=>({error})));
+  assert.equal(second.rows[0].id,null);
+  console.log('PASS: dois workers concorrentes recebem uma única entrega');
+  await a.query('begin');await b.query('begin');
+  await a.query('set local role service_role');await b.query('set local role service_role');
+  const event=(client,type,id)=>client.query('select * from public.record_controller_event($1,$2,$3,$4,$5)',
+    [machine,command.id,command.lease_token,id,type]);
+  await event(a,'STARTED',randomUUID());
+  const finishId=randomUUID();
+  await event(a,'FINISHED',finishId);
+  const duplicate=await completeBlocked(event(b,'FINISHED',finishId).then(result=>({result}),error=>({error})));
+  assert.equal(duplicate.rows[0].status,'FINISHED');
+  assert.equal((await admin.query('select count(*)::int as n from public.controller_events where machine_id=$1 and event_id=$2',
+    [machine,finishId])).rows[0].n,1);
+  assert.equal((await admin.query('select count(*)::int as n from public.machine_reservations where machine_id=$1 and released_at is null',
+    [machine])).rows[0].n,0);
+  console.log('PASS: finalizações simultâneas são idempotentes e liberam uma reserva');
+}
+
 try {
   for (const client of clients) { await client.connect(); connected.add(client); }
   await admin.query('insert into auth.users(id) values ($1),($2)', users);
@@ -131,6 +168,7 @@ try {
   const thirdOrder = (await reserve(admin, users[0], machines[2], randomUUID())).rows[0].id;
   await paymentRace(thirdOrder, 'cancel-before');
   console.log('PASS: cancelamento vence a corrida e pagamento não autoriza máquina');
+  await executionRace(machines[0]);
 } catch (error) {
   console.error('FAIL:', error.code ?? error.message);
   process.exitCode = 1;
@@ -139,6 +177,11 @@ try {
   try {
     if (!connected.has(admin)) throw new Error('Sem conexão para limpeza');
     await admin.query('begin');
+    await admin.query(`delete from public.audit_logs where
+      entity_id in (select id from public.washing_cycles where machine_id=any($1::uuid[]))
+      or entity_id in (select id from public.automation_commands where machine_id=any($1::uuid[]))
+      or entity_id in (select id from public.orders where machine_id=any($1::uuid[]))`, [machines]);
+    await admin.query('delete from public.controller_events where machine_id=any($1::uuid[])', [machines]);
     await admin.query('delete from public.audit_logs where correlation_id in (select id from public.payment_webhook_events where provider=$1)', [provider]);
     await admin.query('delete from public.payment_webhook_events where provider=$1', [provider]);
     await admin.query('delete from public.payments where provider=$1', [provider]);

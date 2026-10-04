@@ -61,6 +61,10 @@ não altera automaticamente pedido/ciclo. Reconciliação de timeout, confirmaç
 recebimento, início físico e finalização serão implementados antes de qualquer
 controlador real. Não confundir AUTHORIZED com RUNNING.
 
+Evolução na quinta migration: operações explícitas de entrega, evidência física
+simulada e timeout estão disponíveis no [contrato do controlador](controller-simulation.md).
+Ainda não existe dispatcher/monitor permanente nem controlador físico conectado.
+
 ## Testes
 
 25 testes adicionais cobrem autorização, deduplicação, identidade, pagamento extra,

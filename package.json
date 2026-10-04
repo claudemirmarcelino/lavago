@@ -14,7 +14,9 @@
     "db:reset": "supabase db reset --local",
     "db:lint": "supabase db lint --local",
     "db:test": "supabase test db",
-    "db:test:concurrency": "node scripts/test-reservation-concurrency.mjs"
+    "db:test:concurrency": "node scripts/test-reservation-concurrency.mjs",
+    "db:test:direct": "node scripts/test-database-direct.mjs",
+    "simulate:controller": "node scripts/simulate-controller.mjs"
   },
   "devDependencies": {
     "pg": "8.23.1",
