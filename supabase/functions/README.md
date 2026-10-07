@@ -1,6 +1,7 @@
 # Edge Functions
 
-Nenhuma função de negócio implementada nesta etapa.
+orders implementa criação/cancelamento para o cliente web com JWT validado no Auth.
+Contrato e fronteiras de confiança: docs/architecture/0004-web-client.md.
 
 Aqui ficarão os pontos de entrada do backend. Requisições do aplicativo devem
 autenticar o usuário e verificar autorização; nunca confiar em preço, proprietário,

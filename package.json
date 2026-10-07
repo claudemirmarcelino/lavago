@@ -16,7 +16,11 @@
     "db:test": "supabase test db",
     "db:test:concurrency": "node scripts/test-reservation-concurrency.mjs",
     "db:test:direct": "node scripts/test-database-direct.mjs",
-    "simulate:controller": "node scripts/simulate-controller.mjs"
+    "simulate:controller": "node scripts/simulate-controller.mjs",
+    "web:local": "node scripts/start-web-local.mjs",
+    "web:dev": "node apps/web/node_modules/vite/bin/vite.js apps/web --host 127.0.0.1 --port 3000 --strictPort",
+    "web:build": "npm --prefix apps/web run build",
+    "test:edge": "node --test scripts/tests/*.test.mjs"
   },
   "devDependencies": {
     "pg": "8.23.1",

@@ -17,7 +17,7 @@ na stack completa em 2026-10-04.
 Terceira migration aplicada localmente: modelo de pagamentos, ciclos, comandos,
 webhooks e auditoria, sem operações financeiras ou acionamento. Lint sem erros;
 63 testes SQL e dois cenários concorrentes passaram na stack local via conexão direta.
-Ainda não há aplicativo, Edge Functions de pedidos, gateway, automação ou CI.
+Cliente web responsivo e Edge Function de pedidos implementados. Build e seis testes unitários da função aprovados; validação ponta a ponta no navegador ainda pendente. Não há aplicativo Android, gateway real, automação física ou CI.
 
 Quarta migration aplicada: confirmação de pagamento previamente verificado pelo
 backend, autorização, ciclo, comando pendente e auditoria em uma única transação.
@@ -32,9 +32,10 @@ duas simulações passaram. Nenhum controlador físico está conectado.
 
 ```text
 apps/mobile/             Aplicativo futuro, tecnologia ainda aberta
+apps/web/                Primeiro cliente web responsivo
 supabase/config.toml     Configuração local
 supabase/migrations/     Histórico SQL versionado
-supabase/functions/      Backend futuro
+supabase/functions/      Edge Function autenticada de pedidos
 supabase/seed.sql        Dados fictícios, inicialmente vazio
 docs/architecture/       Decisões e estratégia de banco
 docs/api/                Contratos futuros
@@ -89,6 +90,8 @@ Não há scripts de deploy remoto neste incremento.
 - [Base financeira e execução física](docs/architecture/0003-payments-automation-foundation.md)
 - [Confirmação verificada e autorização](docs/api/verified-payments.md)
 - [Execução e controlador simulado](docs/api/controller-simulation.md)
+- [Cliente web e decisões](docs/architecture/0004-web-client.md)
+- [Iniciar a interface local](apps/web/README.md)
 - [Validação desta fundação](docs/architecture/validation.md)
 
 Próxima sequência: introduzir CI → Edge Functions para o aplicativo → frontend.

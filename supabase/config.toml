@@ -45,3 +45,8 @@ enable_confirmations = true
 
 [analytics]
 enabled = false
+
+# O handler valida a sessão em Auth /user antes de qualquer RPC privilegiada.
+# Compatível com tokens de sessão e chaves publishable atuais.
+[functions.orders]
+verify_jwt = false

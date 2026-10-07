@@ -1,0 +1,9 @@
+{
+  "name": "@lavago/web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": { "dev": "vite --host 127.0.0.1 --port 3000 --strictPort", "build": "vite build", "preview": "vite preview --host 127.0.0.1 --port 3000 --strictPort" },
+  "dependencies": { "@supabase/supabase-js": "2.117.3" },
+  "devDependencies": { "vite": "8.3.3" }
+}
